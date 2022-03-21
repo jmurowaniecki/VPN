@@ -1,16 +1,26 @@
 #!/usr/bin/env sh
 
+echo "$TERM" | grep -q "color" && {
+    Rgb=\033[0;1;31m
+    rGb=\033[0;1;32m
+    rgb=\033[0m
+}
+
 checkInstall() {
 
     ok() {
-        echo "\e[0;1;32m✓\e[0m ${@}"
+        echo "${rGb}✓${rgb} ${@}"
     }
 
     throwError() {
-        echo "\e[0;1;31m✗\e[0m ${@}"
+        echo "${Rgb}✗${rgb} ${@}"
         exit 1
     }
-    
+
+    which 2> /dev/null || {
+        throwError "Cannot execute without which. See https://linux.die.net/man/1/which and install before continue."
+    }
+
     which openvpn > /dev/null && {
         ok "OpenVPN installed.."
     } || {
