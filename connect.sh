@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 echo "$TERM" | grep -q "color" && {
-    Rgb=\033[0;1;31m
-    rGb=\033[0;1;32m
-    rgb=\033[0m
+    Rgb="\033[0;1;31m"
+    rGb="\033[0;1;32m"
+    rgb="\033[0m"
 }
 
 checkInstall() {
@@ -17,7 +17,7 @@ checkInstall() {
         exit 1
     }
 
-    which 2> /dev/null || {
+    which which 2> /dev/null || {
         throwError "Cannot execute without which. See https://linux.die.net/man/1/which and install before continue."
     }
 
@@ -85,7 +85,10 @@ checkInstall() {
             'Fedora:fedora|redhat|centos|scientific'
         do  distro=$(echo "$each" | awk -F':' '{print($1)}')
             search=$(echo "$each" | awk -F':' '{print($2)}')
-            grep -qEi "${search}" '/etc/issue' && {
+            cat '/etc/issue' '/etc/system-release' | \
+            grep -qEi "${search}" \
+                 > /dev/null \
+                2> /dev/null && {
                 exec${distro}Installer && {
                     ok "OpenVPN client installed."
                 } || {
